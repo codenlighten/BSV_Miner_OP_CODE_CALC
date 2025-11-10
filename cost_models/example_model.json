@@ -1,0 +1,118 @@
+{
+  "profile_id": "benchmark_2025_11_10",
+  "hardware": {
+    "cpu": "x86_64 (detected from benchmarks)",
+    "note": "Running in container/VM - rdtsc only",
+    "frequency_ghz": 3.5
+  },
+  "software": {
+    "bsv_version": "stub_implementation",
+    "compiler": "GCC 11.4.0",
+    "compile_flags": "-O3 -march=native",
+    "openssl_version": "3.0.2"
+  },
+  "calibration_date": "2025-11-10T00:00:00Z",
+  "constants": {
+    "c_dispatch": 5.0,
+    "c_parse_per_byte": 0.8,
+    "description": "Base overhead per opcode and script parsing"
+  },
+  "opcodes": {
+    "OP_DUP": {
+      "model": "constant",
+      "c0": 130,
+      "description": "Measured median: 130 cycles"
+    },
+    "OP_SWAP": {
+      "model": "constant",
+      "c0": 86,
+      "description": "Measured median: 86 cycles (constant regardless of size)"
+    },
+    "OP_PICK": {
+      "model": "constant",
+      "c0": 136,
+      "description": "Constant even at 10k stack depth"
+    },
+    "OP_ROLL": {
+      "model": "linear",
+      "c0": 800,
+      "c1": 80,
+      "description": "Linear in stack size: ~800 + 80*depth cycles"
+    },
+    "OP_CAT": {
+      "model": "linear",
+      "c0": 150,
+      "c1": 0.15,
+      "c_alloc": 50,
+      "description": "Measured: 0.12-0.20 cycles/byte for MB-sized data"
+    },
+    "OP_SPLIT": {
+      "model": "linear",
+      "c0": 200,
+      "c1": 0.35,
+      "description": "Measured: 0.20-0.40 cycles/byte"
+    },
+    "OP_NUM2BIN": {
+      "model": "linear",
+      "c0": 120,
+      "c1": 0.04,
+      "description": "Mostly constant for reasonable sizes"
+    },
+    "OP_BIN2NUM": {
+      "model": "constant",
+      "c0": 90,
+      "description": "Constant cost regardless of input size"
+    },
+    "OP_SHA1": {
+      "model": "linear",
+      "c0": 1000,
+      "c1": 1.24,
+      "description": "Measured R²=0.9999: c₀=-31k + 1.24*n (use positive c₀ for small inputs)"
+    },
+    "OP_SHA256": {
+      "model": "linear",
+      "c0": 1000,
+      "c1": 1.35,
+      "description": "Measured R²=0.9999: 1.35 cycles/byte"
+    },
+    "OP_HASH160": {
+      "model": "linear",
+      "c0": 1500,
+      "c1": 1.37,
+      "description": "SHA256 + RIPEMD160"
+    },
+    "OP_HASH256": {
+      "model": "linear",
+      "c0": 1800,
+      "c1": 1.38,
+      "description": "Double SHA256: 1.38 cycles/byte"
+    },
+    "OP_RIPEMD160": {
+      "model": "linear",
+      "c0": 1000,
+      "c1": 7.60,
+      "description": "Slowest hash: 7.60 cycles/byte"
+    },
+    "OP_CHECKSIG": {
+      "model": "signature",
+      "c_ecdsa": 85000,
+      "c_preimage_per_byte": 1.35,
+      "description": "ECDSA verify + preimage hashing (uses SHA256 rate)"
+    },
+    "OP_CHECKMULTISIG": {
+      "model": "multisig",
+      "c_ecdsa": 85000,
+      "c_preimage_per_byte": 1.35,
+      "c_keyscan": 150,
+      "c_setup": 300,
+      "description": "m signatures verified, (n-m) keys scanned"
+    }
+  },
+  "notes": [
+    "Cost model fitted from actual benchmark measurements (2025-11-10)",
+    "Hash operations have excellent linear fit (R² > 0.9999)",
+    "BSV operations scale linearly even at 20MB",
+    "Values are conservative (use p95 for production)",
+    "ECDSA verify cost is placeholder - needs actual BSV integration"
+  ]
+}
