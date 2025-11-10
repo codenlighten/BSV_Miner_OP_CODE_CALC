@@ -16,9 +16,20 @@ _deps/
 *.so
 *.a
 *.exe
-bench_*_ops
-test_*
-estimate_*
+
+# Built executables (not source files)
+bench_stack_ops
+bench_byte_ops
+bench_hash_ops
+bench_arithmetic
+bench_sig_ops
+bench_control_flow
+test_estimator
+estimate_tx
+
+# But keep source files
+!*.cpp
+!*.h
 
 # IDE
 .vscode/
